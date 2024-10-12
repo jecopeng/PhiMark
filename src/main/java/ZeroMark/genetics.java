@@ -68,7 +68,7 @@ public class genetics {
             //     collect the result.
             Genotype<IntegerGene> result = engine.stream()
                     .limit(Limits.byFitnessThreshold(d.len[i]*0.03))
-                    .limit(300)//the max iterations of
+                    .limit(1000)//the max iterations of
                     .collect(EvolutionResult.toBestGenotype());
 
             if(eval(result)>d.len[i]*0.03){//The attribute is unsuitable for watermarking, remove the attribute from the watermark attributes.
