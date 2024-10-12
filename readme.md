@@ -139,6 +139,12 @@ To set up the project, ensure that your `pom.xml` file includes the necessary de
 </project>
 ```
 
+###### Dataset preparation
+
+Due to GitHub's 25MB limit for individual files, we have split the dataset during upload. Before running the project, the datasets need to be merged and placed in the `database` folder. Please ensure the merged files are named `geography.csv` and `quarterlywages2000.csv`, respectively.
+
+
+
 ###### Running the Project
 
 We conducted experiments using two datasets: the QCEW dataset and the geography dataset. First, we will describe the watermarking process using the QCEW dataset as an example. Finally, we will explain how to switch to the geography dataset for testing. Both datasets are located in the `database` folder.
