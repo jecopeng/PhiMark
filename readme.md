@@ -24,7 +24,7 @@ ZeroMark is a zero-distortion robust database watermarking technique designed to
 
 Before using this project, ensure that your environment meets the following requirements:
 
-- **JDK8** or higher version
+- **JDK11** or higher version
   
   - You can check your JDK version by running the following command:
     
@@ -32,7 +32,7 @@ Before using this project, ensure that your environment meets the following requ
      java -version
     ```
     
-    If JDK 8 is not installed, download it from [here](https://www.oracle.com/java/technologies/javase-jdk8-downloads.html).
+    If JDK 11 is not installed, download it from [here](https://www.oracle.com/java/technologies/downloads/#java11).
 
 - **Maven3.9.6** or higher version
   
