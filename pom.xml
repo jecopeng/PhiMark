@@ -53,6 +53,25 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.47</version>
         </dependency>
+
+        <!-- The following dependencies are only required when testing on text-based datasets. -->
+        <dependency>
+            <groupId>net.sf.jwnl</groupId>
+            <artifactId>jwnl</artifactId>
+            <version>1.4.1-rc2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.example</groupId>
+            <artifactId>ws4j</artifactId>
+            <version>1.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.opennlp</groupId>
+            <artifactId>opennlp-tools</artifactId>
+            <version>2.1.0</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
