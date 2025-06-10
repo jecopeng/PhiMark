@@ -176,8 +176,6 @@ mvn install:install-file -DgroupId=“com.example” -DartifactId=“ws4j” -Dv
 
 
 
-
-
 ###### Dataset preparation
 
 Due to GitHub's 25MB limit for individual files, we have split the dataset during upload. Before running the project, the datasets need to be merged and placed in the `database` folder. Please ensure the merged files are named `geography.csv` ,`quarterlywages2000.csv`   and `Reviews.csv`, respectively. Among them, `geography.csv` and `quarterlywages2000.csv` are used for numerical experiments, while `Reviews.csv` is used for textual experiments. The dataset merging script is located at `src\main\java\Merge\merge.java`.
@@ -188,30 +186,32 @@ Due to GitHub's 25MB limit for individual files, we have split the dataset durin
 
 ###### Running the Project
 
-We conducted experiments using two datasets: the QCEW dataset and the geography dataset. First, we will describe the watermarking process using the QCEW dataset as an example. Finally, we will explain how to switch to the geography dataset for testing. Both datasets are located in the `database` folder.
+We conducted experiments using three datasets: the QCEW dataset, the geography dataset and AFR dataset(textual dataset) . First, we will describe the watermarking process using the QCEW dataset as an example. Finally, we will explain how to switch to other datasets for testing. All datasets are located in the `database` folder.
 
 1. *Embedding watermarks:* First, run the `main` function of `Embedding.java` to embed watermarks into the dataset.
-   
+
    ![](img/1.png)
-   
+
    After the embedding process is completed, the generated verification information file, `"queaterlywages2000veriInfo.json"`, can be found in the `"veri Information"` folder. The information is stored in JSON format.
-   
+
    ![](img/2.png)
-   
+
    ![](img/3.png)
-   
+
    Note: Storing information in a `.json` file is merely for experimental convenience; in practice, we prefer to store such information in database tables.
 
 2. *Simulating malicious attacks:*  Run the `main` function of `attack.java` allows for simulating malicious attacks on the dataset. The deletion and addition attacks generate a new `Data` object called `tmp`, while the remaining attacks modify the original `Data` object d directly.
-   
+
+   ​      **attack.java**
+
    ![](img/4.png)
-   
+
    The attacked dataset can be found in the 'attacked database' folder.
-   
+
    ![](img/5.png)
 
-3. *Extracting the watermark:* run the `main` function of `Extraction.class` on the attacked dataset, which will output the Watermark Match Rate (WMR).
-   
+3. *Extracting the watermark:* run the `main` function of `Extraction.java` on the attacked dataset, which will output the Watermark Match Rate (WMR).
+
    ![](img/6.png)
 
 ###### Supplementary Notes
@@ -224,7 +224,7 @@ We conducted experiments using two datasets: the QCEW dataset and the geography 
   
   ![](img/7.png)
   
-  **attack.java** 
+  **attack.java**
   
   ![](img/8.png)
   
@@ -232,6 +232,22 @@ We conducted experiments using two datasets: the QCEW dataset and the geography 
   
   ![](img/9.png)
 
+- Switch to the `AFR(Reviews)` dataset
+  
+   In addition to changing the "Switch  to the `geography` dataset" content to correspond to **Reviews**, the following parts also need to be modified.
+  
+  **data.java**
+  
+  ![image-20250610221137744](img\13.png)
+  
+  **watermark.java**(encode and decode)
+  
+  ![image-20250610221410061](img\14.png)
+  
+  ![image-20250610221652019](C:\Users\DELL\Desktop\PhiMark\img\15.png)
+  
+  
+  
 - Using meaningful watermarks
   
   PhiMark can also use a meaningful string as a watermark, allowing the extracted watermark to determine data ownership directly.

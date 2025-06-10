@@ -1,6 +1,7 @@
 package PhiMark;
 
 import com.opencsv.exceptions.CsvValidationException;
+import net.didion.jwnl.JWNLException;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -8,17 +9,26 @@ import java.util.HashSet;
 import java.util.Random;
 
 public class attack {
-    public static void main(String[] args) throws CsvValidationException, SQLException, IOException {
-        Data d = new Data("database\\queaterlywages2000.csv",'a');//for QCEW
-        //Data d = new Data("database\\geography.csv",'a');//for geography
-        //Data tmp = attack.deleteAttackwithOutSQL(d);
-        //Data tmp = attack.insertAttackWithoutSQL(d);
-       // Util.toCsv("attacked database\\data.csv",tmp);//Store the attacked dataset in data.csv.(for deletion attack and insertion attack)
+    public static void main(String[] args) throws CsvValidationException, SQLException, IOException, JWNLException {
+        String dbName = "queaterlywages2000.csv";//for QCEW dataset.
+        //String dbName = "geography.csv";//for geography dataset.
+        //String dbName = "Reviews.csv";//for AFR dataset.
+        Data d = new Data("database\\" + dbName,'a');
 
-        //attack.alterattackWithFre(d);
-        attack.altAttackwithOutSQL(d);
-        //attack.verticalModificationAttack(d,2);
-        Util.toCsv("attacked database\\data.csv",d);//Store the attacked dataset in data.csv.(for modification attack)
+        {
+            Data tmp = attack.deleteAttackwithOutSQL(d);
+            //Data tmp = attack.insertAttackWithoutSQL(d);
+            Util.toCsv("attacked database\\attack" + dbName, tmp);//Store the attacked dataset in data.csv.(for deletion attack and insertion attack)
+        }
+
+        {
+            //attack.alterattackWithFre(d);//for QCEW and gegography
+            //attack.altAttackwithOutSQL(d);//for QCEW and gegography
+            //attack.verticalModificationAttack(d,2);
+
+            //attack.alterAttack(d);//only for AFR dataset(textual dataset)
+            //Util.toCsv("attacked database\\attack"+dbName,d);//Store the attacked dataset in data.csv.(for modification attack)
+        }
     }
     /**
      * Select a certain proportion of tuples
@@ -30,7 +40,7 @@ public class attack {
     static HashSet<Integer> select_tuple(Data d){
         //In deletion attacks, the proportion indicated for deletion in the deletion attack,
         //In modification attacks, the proportion indicated for not modified in the modification attack
-        double rate = 0.2;
+        double rate = 0.8;
 
         //tuple_num is the number of tuples retained in the deletion attack and the number of tuples modified in the modification attack.
         int tuple_num = (int)((1-rate)*d.d.get(0).size());
@@ -98,7 +108,7 @@ public class attack {
     public static void alterattackWithFre(Data d){
         d.compute_count();
         d.sort_count();//Sort all unique values for each attribute by their frequency of occurrence.
-        double r = 0.8;
+        double r = 0.5;
         Random random = new Random();
         for(int i = 0;i<d.d.size();i++){//Prioritize modifying unique values with higher frequencies
             int count = 0;//Count the modified values until the attack ratio is reached
@@ -144,6 +154,45 @@ public class attack {
             int tmp = random.nextInt(d.d.size());
             d.d.remove(tmp);
             d.name.remove(tmp);
+        }
+    }
+
+    /**
+     * Select a certain proportion of tuples
+     * @param d
+     */
+    static HashSet<Integer> select_altered_tuple(Data d){
+        //In deletion attacks, the proportion indicated for deletion in the deletion attack,
+        //In modification attacks, the proportion indicated for not modified in the modification attack
+        double rate = 0.7;
+
+        //tuple_num is the number of tuples retained in the deletion attack and the number of tuples modified in the modification attack.
+        int tuple_num = (int)(rate*50000);
+
+        HashSet<Integer> set = new HashSet<>();
+        Random random = new Random();
+        while(set.size()<tuple_num){
+            int temp = random.nextInt(50000);//看修改哪些元组
+            set.add(temp);
+        }
+        return set;
+    }
+
+    /**
+     * Testing Synonym Substitution Attack (on the AFR Text Dataset)
+     * @param d
+     */
+    public static void alterAttack(Data d) throws SQLException, IOException, JWNLException {
+        HashSet<Integer> set = select_altered_tuple(d);
+        SemanticUtils utils = new SemanticUtils();
+        for(int i : set){//Perform synonym substitution on the long text attribute Text
+            //In the PhiMark experiments, the remaining attributes are randomly modified.
+            //In the comparative methods, these attributes are left unchanged to maintain consistency in the generated virtual primary key.
+            utils.synonymSubstitution(d,i);
+            d.d.get(1).set(i,Util.getRandomAlphaString(10));
+            d.d.get(2).set(i,Util.getRandomAlphaString(10));
+            d.d.get(3).set(i,Util.getRandomAlphaString(10));
+
         }
     }
 }

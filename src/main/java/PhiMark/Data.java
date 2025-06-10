@@ -65,13 +65,14 @@ public class Data {
      */
     public Data(String str) throws SQLException, IOException, CsvValidationException {
         combine = new Vector<>();//Test, assuming these attributes require watermarking.
-        combine.add(new int[]{0});//for queaterlywages2000.csv
+        combine.add(new int[]{0});//for queaterlywages2000.csv and geography.csv
         combine.add(new int[]{1});
         combine.add(new int[]{2});
 
-        /*combine.add(new int[]{0});//for geography.csv
-        combine.add(new int[]{1});
-        combine.add(new int[]{2});*/
+        /*combine.add(new int[]{1});//for Reviews.csv
+        combine.add(new int[]{2});
+        combine.add(new int[]{3});
+        combine.add(new int[]{9});*/
 
         d = new Vector<>(combine.size());//
         for(int i = 0;i< combine.size();i++){
@@ -119,13 +120,14 @@ public class Data {
     public Data(String str, int num) throws SQLException, IOException, CsvValidationException{
         int count = 0;//Record the number of tuples read in
         combine = new Vector<>();//Test, assuming these attributes require watermarking.
-        combine.add(new int[]{0});//for queaterlywages2000.csv
-        combine.add(new int[]{1});
-        combine.add(new int[]{2});
-
-        /*combine.add(new int[]{0});//for geography.csv
+        /*combine.add(new int[]{0});//for queaterlywages2000.csv and geography.csv
         combine.add(new int[]{1});
         combine.add(new int[]{2});*/
+
+        combine.add(new int[]{1});//for Reviews.csv
+        combine.add(new int[]{2});
+        combine.add(new int[]{3});
+        combine.add(new int[]{9});
 
         d = new Vector<>(combine.size());
         for(int i = 0;i< combine.size();i++){
@@ -139,8 +141,15 @@ public class Data {
         String[] record;
 
         record = csvReader.readNext();//Skip the first row containing the attribute names.
-        for(int i = 0;i< record.length;i++){
-            name.add(record[i]);
+        for(int i = 0;i< combine.size();i++){//
+            String tmp = "";
+            for(int j = 0;j<combine.get(i).length;j++){
+                tmp += record[combine.get(i)[j]];
+                if(j!=combine.get(i).length-1){//Combine attribute names with different attribute names separated by “,”
+                    tmp+=",";
+                }
+            }
+            name.add(tmp);
         }
         while ((record = csvReader.readNext()) != null) {//Read data from a CSV file.
             count++;
@@ -229,6 +238,80 @@ public class Data {
         getLen();
     }
 
+
+    /**
+     * Extract watermark attributes from the attacked dataset based on the attribute names.
+     * @param str
+     * @param names
+     * @throws SQLException
+     * @throws IOException
+     * @throws CsvValidationException
+     */
+    public Data(String str,String[] names, Vector<Integer> paras,Vector<StringBuffer> code, int cou) throws SQLException, IOException, CsvValidationException {
+        Reader reader = Files.newBufferedReader(Paths.get(str));
+        CSVReader csvReader = new CSVReader(reader);
+        String[] record;
+        record = csvReader.readNext();
+
+
+        combine = new Vector<>(names.length);
+        int count = 0;//Record the number of watermark attributes that cannot be found
+        int co = 0;//Record the total number of partitions for the processed attributes
+        //Find the index of the attributes corresponding to the combination attribute using the attribute name
+        for(int i = 0;i<names.length;i++){
+
+            String[] tmp = names[i].split(",");
+            int[] t = new int[tmp.length];
+            int num = 0;
+            boolean bool = true;
+            //Match the stored attribute names with the read attribute names to obtain the index of the watermark attributes
+            for(String s:tmp){
+                int j = 0;
+                for(j = 0;j< record.length;j++){
+                    if(record[j].equals(s)){
+                        t[num++] = j;
+                        break;
+                    }
+                }
+                //This attribute has been removed, and during reading, both the attribute and its verification information are skipped.
+                if(j == record.length){
+                    for(int p = co;p<co+paras.get(2*(i-count));p++){
+                        code.remove(co);
+                    }
+                    paras.remove(2*(i-count));
+                    paras.remove(2*(i-count));
+                    bool = false;
+                    count++;
+                    break;
+                }
+            }
+            if(bool){
+                combine.add(t);
+                co+=paras.get(2*(i-count));//Add the number of partitions corresponding to this attribute to the total count
+            }
+        }
+
+        d = new Vector<>(combine.size());
+        for(int i = 0;i< combine.size();i++){//Initialize d
+            d.add(new Vector<>());
+        }
+
+        int tmp = 0;
+
+        while ((record = csvReader.readNext()) != null) {
+            for(int t = 0; t<combine.size();t++){
+                String addString = "";
+                for(int i = 0;i<combine.get(t).length;i++){
+                    addString+=record[combine.get(t)[i]];
+                }
+                d.get(t).add(addString);
+            }
+            if(++tmp == cou){
+                break;
+            }
+        }
+        getLen();
+    }
     /**
      * Initialize the dataset for the deletion attack and the insertion attack
      * @param size     The number of watermark attributes

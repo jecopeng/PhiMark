@@ -67,11 +67,11 @@ public class genetics {
             // 4.) Start the execution (evolution) and
             //     collect the result.
             Genotype<IntegerGene> result = engine.stream()
-                    .limit(Limits.byFitnessThreshold(d.len[i]*0.03))
-                    .limit(1000)//the max iterations of
+                    .limit(Limits.byFitnessThreshold(d.len[i]*0.025))
+                    .limit(100000)//the max iterations of
                     .collect(EvolutionResult.toBestGenotype());
 
-            if(eval(result)>d.len[i]*0.03){//The attribute is unsuitable for watermarking, remove the attribute from the watermark attributes.
+            if(eval(result)>d.len[i]*0.025){//The attribute is unsuitable for watermarking, remove the attribute from the watermark attributes.
                 System.out.println(i+"The attribute is unsuitable for watermarking");
                 d.d.remove(i);
                 d.combine.remove(i);

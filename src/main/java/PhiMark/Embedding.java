@@ -9,8 +9,8 @@ import java.sql.SQLException;
 public class Embedding {
     public static void main(String[] args) throws CsvValidationException, SQLException, IOException, NoSuchAlgorithmException {
         watermark wm = new watermark();
-        wm.encode("Reviews");
-        //wm.encode("queaterlywages2000");//for QCEW dataset.
-        //wm.encode("geography");
+        //wm.encode("Reviews");//for AFR dataset.
+        wm.encode("queaterlywages2000");//for QCEW dataset.
+        //wm.encode("geography");//for geography dataset.
     }
 }

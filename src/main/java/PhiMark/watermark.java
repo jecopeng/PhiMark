@@ -25,19 +25,20 @@ public class watermark {
      */
     public void encode(String dataName) throws CsvValidationException, SQLException, IOException, NoSuchAlgorithmException {
         String csvPath = "database\\" + dataName + ".csv";
-        Data d = new Data(csvPath);//read in data from a CSV file (for QCEW dataset).
+        Data d = new Data(csvPath);//read in data from a CSV file (for QCEW and geography dataset).
+        //Data d = new Data(csvPath,50000);//for AFR dataset
         //String watermark = generateWatermark(1000);//Randomly generate a 1000-bit binary string as a watermark.
 
         //In practical applications, meaningful copyright information is often used as a watermark.
         //In this case, the ownership of the data can be directly determined based on the extracted watermark information.
-        String watermark = generateWatermark("ACM SIGMOD/PODS International Conference on Management of Data, June 22-27, 2025 Berlin, Germany");
+        String watermark = generateWatermark("International Conference on Extending Database Technology");
         int len = watermark.length();
 
         //long stime = System.currentTimeMillis();//Test the time overhead of embedding watermarks;
         Vector<Integer> parameters = genetics.getGene(d,len);
 
-        String key1 = "ACM";//SK1
-        String key2 = "SIGMOD";//SK2
+        String key1 = "Extending Database Technology";//SK1
+        String key2 = "EDBT";//SK2
 
         Vector<Vector<Vector<Integer>>> partitions = getAllPartitions(parameters,d,key1);//Get the index of the selected value in each partition.
         int t = computeMasks(parameters); //Calculate the total number of verification bit strings to store.
@@ -123,8 +124,9 @@ public class watermark {
         }
 
 
-        Data d = new Data("attacked database\\data.csv",names,parameters,Code);//data.csv is the copyright-dispute dataset
-        //Data d = new Data("database\\" + dataName+".csv");
+        Data d = new Data("attacked database\\attack" + dataName + ".csv",names,parameters,Code);//attackdatabaseName.csv is the copyright-dispute dataset
+        //Data d = new Data("attacked database\\attack" + dataName + ".csv",names,parameters,Code,50000);//for AFR dataset.
+
         String res = decodeWatermark(d,Keys[0],Keys[1],parameters,Code,watermark.length());
 
         if(res.equals(watermark)){
