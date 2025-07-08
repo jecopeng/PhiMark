@@ -238,13 +238,13 @@ We conducted experiments using three datasets: the QCEW dataset, the geography d
   
   **data.java**
   
-  ![image-20250610221137744](img\13.png)
+  ![image-20250610221137744](img/13.png)
   
   **watermark.java**(encode and decode)
   
-  ![image-20250610221410061](img\14.png)
+  ![image-20250610221410061](img/14.png)
   
-  ![image-20250610221652019](C:\Users\DELL\Desktop\PhiMark\img\15.png)
+  ![image-20250610221652019](img/15.png)
   
   
   
